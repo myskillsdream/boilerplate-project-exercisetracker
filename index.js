@@ -1,26 +1,8 @@
-// const express = require('express')
-// const app = express()
-// const cors = require('cors')
-// require('dotenv').config()
-
-// app.use(cors())
-// app.use(express.static('public'))
-// app.get('/', (req, res) => {
-//   res.sendFile(__dirname + '/views/index.html')
-// });
-
-
-
-
-
-// const listener = app.listen(process.env.PORT || 3000, () => {
-//   console.log('Your app is listening on port ' + listener.address().port)
-// })
-
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
-require('dotenv').config()
+
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser")
 
@@ -54,8 +36,7 @@ app.get('/', (req, res) => {
 });
 
 
-app.post("/api/users", (req, res) => {
-  console.log(`req.body`, req.body)
+app.post("/api/users", (req, res) => {  
   const newUser = new User({
     username: req.body.username
   })
@@ -119,7 +100,7 @@ app.get("/api/users/:id/logs", (req, res) => {
       if(from || to ){
         filter.date = dateObj
       }
-      let nonNullLimit = limit ? 500
+      let nonNullLimit = limit || 500
       Exercise.find(filter).limit(+nonNullLimit).exec((err, data) => {
         if(err || !data){
           res.json([])
