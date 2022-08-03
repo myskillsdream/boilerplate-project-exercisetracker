@@ -105,7 +105,7 @@ app.get("/api/users/:id/logs", (req, res) => {
         if(err || !data){
           res.json([])
         }else{
-          const count = data.length
+          let count = data.length
           const rawLog = data
           const {username, _id} = userData;
           const log= rawLog.map((l) => ({
