@@ -100,7 +100,7 @@ app.get("/api/users/:id/logs", (req, res) => {
       if(from || to ){
         filter.date = dateObj
       }
-      let nonNullLimit = limit ?? 500
+      let nonNullLimit = limit ? limit : 500;
       Exercise.find(filter).limit(+nonNullLimit).exec((err, data) => {
         if(err || !data){
           res.json([])
