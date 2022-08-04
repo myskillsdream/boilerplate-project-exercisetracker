@@ -105,6 +105,9 @@ app.get("/api/users/:id/logs", (req, res) => {
         if(err || !data){
           res.json([])
         }else{
+
+            console.log(data)
+
           let count = data.length
           const rawLog = data
           const {username, _id} = userData;
@@ -120,15 +123,15 @@ app.get("/api/users/:id/logs", (req, res) => {
   })
 })
 
-app.get("/api/users", (req, res) => {
-  User.find({}, (err, data) => {
-    if(!data){
-      res.send("No users")
-    }else{
-      res.json(data)
-    }
-  })
-})
+// app.get("/api/users", (req, res) => {
+//   User.find({}, (err, data) => {
+//     if(!data){
+//       res.send("No users")
+//     }else{
+//       res.json(data)
+//     }
+//   })
+// })
 
 
 
