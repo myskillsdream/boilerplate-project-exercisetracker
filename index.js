@@ -123,21 +123,21 @@ app.post("/api/users/:id/exercises", (req, res) => {
 //   })
 // })
 
-app.get("/api/users/:_id/logs", (req, res) => {
+app.get("/api/users/:id/logs", (req, res) => {
   // get user id from params and check that it won't break the DB query
-  const { _id } = req.params;
-  if (_id.length !== 24) {
+  const { id } = req.params;
+  if (id.length !== 24) {
     return res.json({ error: "User ID needs to be 24 hex characters" });
   }
 
   // find the user
-  User.findById(_id, (userObject) => {
+  User.findById(id, (userObject) => {
     if (userObject === null) res.json({ error: "User not found" });
     else {
       const limit = req.query.limit ? req.query.limit : 0;
 
       // /!\ NOTE `limit` is being applied here BEFORE `from` and `to`
-      let promise = ExerciseActivity.find({ user_id: _id }).limit(limit).exec();
+      let promise = ExerciseActivity.find({ user_id: id }).limit(limit).exec();
       assert.ok(promise instanceof Promise);
       promise.then((exerciseObjects) => {
         // /!\ NOTE `limit` has already been applied at this point, so only
@@ -160,7 +160,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
         }));
 
         res.json({
-          _id: userObject._id,
+          _id: userObject.id,
           username: userObject.username,
           count: exerciseObjects.length,
           log: exerciseObjects,
