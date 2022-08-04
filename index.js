@@ -66,7 +66,7 @@ app.post("/api/users/:id/exercises", (req, res) => {
         if(err || !data) {
           res.send("There was an error saving this exercise")
         }else {
-          const { description, duration, date, _id} = data;
+          const { description, duration, date } = data;
           res.json({
             username: userData.username,
             description,
