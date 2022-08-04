@@ -24,7 +24,7 @@ const UserSchema = new Schema({
   username: String,
 });
 const User = mongoose.model("User", UserSchema);
-const Exercise = mongoose.model("Exercise", ExerciseSchema);
+const ExerciseActivity = mongoose.model("Exercise", ExerciseSchema);
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -80,48 +80,97 @@ app.post("/api/users/:id/exercises", (req, res) => {
   })
 })
 
-app.get("/api/users/:id/logs", (req, res) => {
-  const { from, to, limit } = req.query;
-  const {id} = req.params;
-  User.findById(id, (err, userData) => {
-    if(err || !userData) {
-      res.send("Could not find user");
-    }else{
-      let dateObj = {}
-      if(from){
-        dateObj["$gte"] = new Date(from)
-      }
-      if(to){
-        dateObj["$lte"] = new Date(to)
-      }
-      let filter = {
-        userId: id
-      }
-      if(from || to ){
-        filter.date = dateObj
-      }
-      let nonNullLimit = limit ? limit : 500;
-      Exercise.find(filter).limit(+nonNullLimit).exec((err, data) => {
-        if(err || !data){
-          res.json([])
-        }else{
+// app.get("/api/users/:id/logs", (req, res) => {
+//   const { from, to, limit } = req.query;
+//   const {id} = req.params;
+//   User.findById(id, (err, userData) => {
+//     if(err || !userData) {
+//       res.send("Could not find user");
+//     }else{
+//       let dateObj = {}
+//       if(from){
+//         dateObj["$gte"] = new Date(from)
+//       }
+//       if(to){
+//         dateObj["$lte"] = new Date(to)
+//       }
+//       let filter = {
+//         userId: id
+//       }
+//       if(from || to ){
+//         filter.date = dateObj
+//       }
+//       let nonNullLimit = limit ? limit : 500;
+//       Exercise.find(filter).limit(+nonNullLimit).exec((err, data) => {
+//         if(err || !data){
+//           res.json([])
+//         }else{
 
-            console.log(data)
+//             console.log(data)
 
-          let count = data.length
-          const rawLog = data
-          const {username, _id} = userData;
-          const log = rawLog.map((l) => ({
-            description: l.description,
-            duration: l.duration,
-            date: l.date.toDateString()
-          }))
-          res.json({username, count, _id, log})
+//           let count = data.length
+//           const rawLog = data
+//           const {username, _id} = userData;
+//           const log = rawLog.map((l) => ({
+//             description: l.description,
+//             duration: l.duration,
+//             date: l.date.toDateString()
+//           }))
+//           res.json({username, count, _id, log})
+//         }
+//       })
+//     } 
+//   })
+// })
+
+app.get("/api/users/:_id/logs", (req, res) => {
+  // get user id from params and check that it won't break the DB query
+  const { _id } = req.params;
+  if (_id.length !== 24) {
+    return res.json({ error: "User ID needs to be 24 hex characters" });
+  }
+
+  // find the user
+  getUserByIdAnd(_id, (userObject) => {
+    if (userObject === null) res.json({ error: "User not found" });
+    else {
+      const limit = req.query.limit ? req.query.limit : 0;
+
+      // /!\ NOTE `limit` is being applied here BEFORE `from` and `to`
+      let promise = ExerciseActivity.find({ user_id: _id }).limit(limit).exec();
+      assert.ok(promise instanceof Promise);
+      promise.then((exerciseObjects) => {
+        // /!\ NOTE `limit` has already been applied at this point, so only
+        // the truncated array of exercises will be filtered by `from` and `to`
+        if (req.query.from) {
+          const from = new Date(req.query.from);
+          exerciseObjects = exerciseObjects.filter(
+            (e) => new Date(e.date).getTime() >= from.getTime()
+          );
         }
-      })
-    } 
-  })
-})
+        if (req.query.to) {
+          const to = new Date(req.query.to);
+          exerciseObjects = exerciseObjects.filter(
+            (e) => new Date(e.date).getTime() <= to.getTime()
+          );
+        }
+        exerciseObjects = exerciseObjects.map((e) => ({
+          ...e,
+          date: new Date(e.date).toDateString(),
+        }));
+
+        res.json({
+          _id: userObject._id,
+          username: userObject.username,
+          count: exerciseObjects.length,
+          log: exerciseObjects,
+        });
+      });
+    }
+  });
+});
+
+
 
 app.get("/api/users", (req, res) => {
   User.find({}, (err, data) => {
