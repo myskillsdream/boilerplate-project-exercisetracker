@@ -106,9 +106,8 @@ app.get("/api/users/:id/logs", (req, res) => {
           res.json([])
         }else{
 
-            console.log(data)
-
           let count = data.length
+
           const rawLog = data
           const {username, _id} = userData;
           const log = rawLog.map((l) => ({
@@ -117,6 +116,8 @@ app.get("/api/users/:id/logs", (req, res) => {
             date: l.date.toDateString()
           }))
           res.json({username, count, _id, log})
+
+          console.log(log)
         }
       })
     } 
