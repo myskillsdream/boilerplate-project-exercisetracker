@@ -36,18 +36,18 @@ const { Schema } = mongoose;
 // });
 
 
-// app.post("/api/users", (req, res) => {  
-//   const newUser = new User({
-//     username: req.body.username
-//   })
-//   newUser.save((err, data) => {
-//     if(err || !data){
-//       res.send("There was an error saving the user")
-//     }else{
-//       res.json(data)
-//     }
-//   })
-// })
+app.post("/api/users", (req, res) => {  
+  const newUser = new User({
+    username: req.body.username
+  })
+  newUser.save((err, data) => {
+    if(err || !data){
+      res.send("There was an error saving the user")
+    }else{
+      res.json(data)
+    }
+  })
+})
 
 // app.post("/api/users/:id/exercises", (req, res) => {
 //   const id = req.params.id
@@ -160,16 +160,16 @@ app.get('/', (req, res) => {
 
 
 //Endpoind Of user
-app.route("/api/users").post(async(req,res)=>{
-  const{username}=req.body
-  const user=await User.create({username:username})
-  res.json(user)
-}).get(async(req,res)=>{
+// app.route("/api/users").post(async(req,res)=>{
+//   const{username}=req.body
+//   const user=await User.create({username:username})
+//   res.json(user)
+// }).get(async(req,res)=>{
 
-const user=await User.find()
+// const user=await User.find()
 
-res.json(user)
-})
+// res.json(user)
+// })
 
 //Excercise Endpoint
 
