@@ -117,7 +117,7 @@ app.get("/api/users/:id/logs", (req, res) => {
           }))
           res.json({username, count, _id, log})
 
-          console.log(log)
+          console.log(count)
         }
       })
     } 
