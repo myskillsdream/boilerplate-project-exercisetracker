@@ -123,7 +123,7 @@ app.post("/api/users/:id/exercises", (req, res) => {
 //   })
 // })
 
-app.get("/api/users/:_id/logs", (req, res) => {
+app.get("/api/users/:id/logs", (req, res) => {
   // get user id from params and check that it won't break the DB query
   const { _id } = req.params;
   if (_id.length !== 24) {
