@@ -131,7 +131,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
   }
 
   // find the user
-  getUserByIdAnd(_id, (userObject) => {
+  User.findById(_id, (userObject) => {
     if (userObject === null) res.json({ error: "User not found" });
     else {
       const limit = req.query.limit ? req.query.limit : 0;
