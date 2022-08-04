@@ -49,7 +49,7 @@ app.post("/api/users", (req, res) => {
   })
 })
 
-app.post("/api/users/:id/exercises", (req, res) => {
+app.post("/api/users/:_id/exercises", (req, res) => {
   const id = req.params.id
   const {description, duration, date} = req.body
   User.findById(id, (err, userData) => {
@@ -80,7 +80,7 @@ app.post("/api/users/:id/exercises", (req, res) => {
   })
 })
 
-app.get("/api/users/:id/logs", (req, res) => {
+app.get("/api/users/:_id/logs", (req, res) => {
   const { from, to, limit } = req.query;
   const {id} = req.params;
   User.findById(id, (err, userData) => {
