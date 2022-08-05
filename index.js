@@ -49,16 +49,6 @@ app.post("/api/users", (req, res) => {
   })
 })
 
-app.get("/api/users", (req, res) => {
-  User.find({}, (err, data) => {
-    if(!data){
-      res.send("No users")
-    }else{
-      res.json(data)
-    }
-  })
-})
-
 app.post("/api/users/:id/exercises", (req, res) => {
   const id = req.params.id
   const {description, duration, date} = req.body
@@ -131,6 +121,16 @@ app.get("/api/users/:id/logs", (req, res) => {
         }
       })
     } 
+  })
+})
+
+app.get("/api/users", (req, res) => {
+  User.find({}, (err, data) => {
+    if(!data){
+      res.send("No users")
+    }else{
+      res.json(data)
+    }
   })
 })
 
