@@ -108,88 +108,50 @@ app.post("/api/users/:id/exercises", (req, res) => {
   })
 })
 
-// app.get("/api/users/:id/logs", (req, res) => {
-//   const { from, to, limit } = req.query;
-//   const {id} = req.params;
-//   User.findById(id, (err, userData) => {
-//     if(err || !userData) {
-//       res.send("Could not find user");
-//     }else{
-//       let dateObj = {}
-//       if(from){
-//         dateObj["$gte"] = new Date(from)
-//       }
-//       if(to){
-//         dateObj["$lte"] = new Date(to)
-//       }
-//       let filter = {
-//         userId: id
-//       }
-//       if(from || to ){
-//         filter.date = dateObj
-//       }
-//       let nonNullLimit = limit ? limit : 500;
-//       Exercise.find(filter).limit(nonNullLimit).exec((err, data) => {
-//         if(err || !data){
-//           res.json([])
-//         }else{
-
-//           let count = data.length
-
-//           const rawLog = data
-//           const {username, _id} = userData;
-//           const log = rawLog.map((l) => ({
-//             description: l.description,
-//             duration: l.duration,
-//             date: l.date.toDateString()
-//           }))
-//           res.json({username, count, _id, log})
-
-//           console.log(count)
-//         }
-//       })
-//     } 
-//   })
-// })
-
-
-app.get("/api/users/:_id/logs", (req, res) => {
-  User.findById(req.params._id, (error, result) => {
-    if (!error) {
-      let resObj = result;
-
-      if (req.query.from || req.query.to) {
-        let fromDate = new Date(0);
-        let toDate = new Date();
-
-        if (req.query.from) {
-          fromDate = new Date(req.query.from);
-        }
-
-        if (req.query.to) {
-          toDate = new Date(req.query.to);
-        }
-
-        fromDate = fromDate.getTime();
-        toDate = toDate.getTime();
-
-        resObj.log = resObj.log.filter(session => {
-          let sessionDate = new Date(session.date).getTime();
-
-          return sessionDate >= fromDate && sessionDate <= toDate;
-        });
+app.get("/api/users/:id/logs", (req, res) => {
+  const { from, to, limit } = req.query;
+  const {id} = req.params;
+  User.findById(id, (err, userData) => {
+    if(err || !userData) {
+      res.send("Could not find user");
+    }else{
+      let dateObj = {}
+      if(from){
+        dateObj["$gte"] = new Date(from)
       }
-
-      if (req.query.limit) {
-        resObj.log = resObj.log.slice(0, req.query.limit);
+      if(to){
+        dateObj["$lte"] = new Date(to)
       }
+      let filter = {
+        userId: id
+      }
+      if(from || to ){
+        filter.date = dateObj
+      }
+      let nonNullLimit = limit ? limit : 500;
+      Exercise.find(filter).limit(nonNullLimit).exec((err, data) => {
+        if(err || !data){
+          res.json([])
+        }else{
 
-      resObj = resObj.toJSON();
-      resObj["count"] = result.log.length;
-      res.json(resObj);
-    }
-  });
-});
+          let count = data.length
+
+          const rawLog = data
+          const {username, _id} = userData;
+          const log = rawLog.map((l) => ({
+            description: l.description,
+            duration: l.duration,
+            date: l.date.toDateString()
+          }))
+          res.json({username, count, _id, log})
+
+          console.log(count)
+        }
+      })
+    } 
+  })
+})
+
 
 
 // app.get("/api/users", (req, res) => {
