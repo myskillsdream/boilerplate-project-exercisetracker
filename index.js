@@ -36,18 +36,36 @@ app.get('/', (req, res) => {
 });
 
 
-app.post("/api/users", (req, res) => {  
-  const newUser = new User({
-    username: req.body.username
-  })
-  newUser.save((err, data) => {
-    if(err || !data){
-      res.send("There was an error saving the user")
-    }else{
-      res.json(data)
+// app.post("/api/users", (req, res) => {  
+//   const newUser = new User({
+//     username: req.body.username
+//   })
+//   newUser.save((err, data) => {
+//     if(err || !data){
+//       res.send("There was an error saving the user")
+//     }else{
+//       res.json(data)
+//     }
+//   })
+// })
+
+app.post("/api/users", (req, res) => {
+  User.findOne({ username: req.body.username }, (err, foundUser) => {
+    if (err) return;
+    if (foundUser) {
+      res.send("Username Taken");
+    } else {
+      const newUser = new User({
+        username: req.body.username
+      });
+      newUser.save();
+      res.json({
+        username: req.body.username,
+        _id: newUser._id
+      });
     }
-  })
-})
+  });
+});
 
 app.post("/api/users/:id/exercises", (req, res) => {
   const id = req.params.id
