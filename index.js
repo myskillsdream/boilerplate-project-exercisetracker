@@ -153,12 +153,12 @@ app.post("/api/users/:id/exercises", (req, res) => {
 // })
 
 
-app.get("/api/users/:id/logs",async(req,res)=>{
-  if(req.params.id){
-    await User.findById(req.params.id,(err,result)=>{
+app.get("/api/users/:_id/logs",async(req,res)=>{
+  if(req.params._id){
+    await User.findById(req.params._id,(err,result)=>{
     if(!err){
       let responseObj={}
-      responseObj["_id"]=result.id
+      responseObj["_id"]=result._id
       responseObj["username"]=result.username
       responseObj["count"]=result.log.length
       
