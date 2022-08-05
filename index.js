@@ -153,51 +153,43 @@ app.post("/api/users/:id/exercises", (req, res) => {
 // })
 
 
-app.get("/api/users/:_id/logs",async(req,res)=>{
-  if(req.params._id){
-    await User.findById(req.params._id,(err,result)=>{
-    if(!err){
-      let responseObj={}
-      responseObj["_id"]=result._id
-      responseObj["username"]=result.username
-      responseObj["count"]=result.log.length
-      
-      if(req.query.limit){
-        responseObj["log"]=result.log.slice(0,req.query.limit)
-      }else{
-        responseObj["log"]=result.log.map(log=>({
-        description:log.description,
-        duration:log.duration,
-        date:new Date(log.date).toDateString()
-      }))
-      }
-      if(req.query.from||req.query.to){
-        let fromDate=new Date(0)
-        let toDate=new Date()
-        if(req.query.from){
-          fromDate=new Date(req.query.from)
-        }
-        if(req.query.to){
-          toDate=new Date(req.query.to)
-        }
-        fromDate=fromDate.getTime()
-        toDate=toDate.getTime()
-        responseObj["log"]=result.log.filter((session)=>{
-          let sessionDate=new Date(session.date).getTime()
+app.get("/api/users/:_id/logs", (req, res) => {
+  User.findById(req.params._id, (error, result) => {
+    if (!error) {
+      let resObj = result;
 
-          return sessionDate>=fromDate&&sessionDate<=toDate
-        })
+      if (req.query.from || req.query.to) {
+        let fromDate = new Date(0);
+        let toDate = new Date();
+
+        if (req.query.from) {
+          fromDate = new Date(req.query.from);
+        }
+
+        if (req.query.to) {
+          toDate = new Date(req.query.to);
+        }
+
+        fromDate = fromDate.getTime();
+        toDate = toDate.getTime();
+
+        resObj.log = resObj.log.filter(session => {
+          let sessionDate = new Date(session.date).getTime();
+
+          return sessionDate >= fromDate && sessionDate <= toDate;
+        });
       }
-      res.json(responseObj)
-    }else{
-      res.json({err:err})
+
+      if (req.query.limit) {
+        resObj.log = resObj.log.slice(0, req.query.limit);
+      }
+
+      resObj = resObj.toJSON();
+      resObj["count"] = result.log.length;
+      res.json(resObj);
     }
-  })
-  }else{
-    res.json({user:"user not found with this id"})
-  }
-})
-
+  });
+});
 
 
 // app.get("/api/users", (req, res) => {
