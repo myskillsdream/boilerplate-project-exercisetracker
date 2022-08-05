@@ -60,7 +60,7 @@ app.post("/api/users/:id/exercises", (req, res) => {
         userId: id, 
         description,
         duration,
-        date: new Date(date), 
+        date: new Date(date).toDateString(), 
       })
       newExercise.save((err, data) => {
         if(err || !data) {
