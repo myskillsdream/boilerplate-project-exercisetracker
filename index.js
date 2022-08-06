@@ -36,36 +36,36 @@ app.get('/', (req, res) => {
 });
 
 
-// app.post("/api/users", (req, res) => {  
-//   const newUser = new User({
-//     username: req.body.username
-//   })
-//   newUser.save((err, data) => {
-//     if(err || !data){
-//       res.send("There was an error saving the user")
-//     }else{
-//       res.json(data)
-//     }
-//   })
-// })
-
-app.post("/api/users", (req, res) => {
-  User.findOne({ username: req.body.username }, (err, foundUser) => {
-    if (err) return;
-    if (foundUser) {
-      res.send("Username Taken");
-    } else {
-      const newUser = new User({
-        username: req.body.username
-      });
-      newUser.save();
-      res.json({
-        username: req.body.username,
-        _id: newUser.id
-      });
+app.post("/api/users", (req, res) => {  
+  const newUser = new User({
+    username: req.body.username
+  })
+  newUser.save((err, data) => {
+    if(err || !data){
+      res.send("There was an error saving the user")
+    }else{
+      res.json(data)
     }
-  });
-});
+  })
+})
+
+// app.post("/api/users", (req, res) => {
+//   User.findOne({ username: req.body.username }, (err, foundUser) => {
+//     if (err) return;
+//     if (foundUser) {
+//       res.send("Username Taken");
+//     } else {
+//       const newUser = new User({
+//         username: req.body.username
+//       });
+//       newUser.save();
+//       res.json({
+//         username: req.body.username,
+//         _id: newUser.id
+//       });
+//     }
+//   });
+// });
 
 app.get("/api/users", (req, res) => {
   User.find({}, (err, data) => {
@@ -107,6 +107,47 @@ app.post("/api/users/:id/exercises", (req, res) => {
     }
   })
 })
+
+app.get("/api/users/:_id/logs", (req, res) => {
+  const { from, to, limit } = req.query;
+  const {id} = req.params;
+  User.findById(id, (err, userData) => {
+    if(err || !userData) {
+      res.send("Could not find user");
+    }else{
+      let dateObj = {}
+      if(from){
+        dateObj["$gte"] = new Date(from)
+      }
+      if(to){
+        dateObj["$lte"] = new Date(to)
+      }
+      let filter = {
+        userId: id
+      }
+      if(from || to ){
+        filter.date = dateObj
+      }
+      // let nonNullLimit = limit ? limit : 500;
+      let limitPage = (limit !== '' ? parseInt(limit) : 500);
+
+      Exercise.find(filter).limit(limitPage).exec((err, data) => {
+        if(err || !data){
+          res.json([])
+        }else{
+
+          let count = data.length
+
+          const {username, _id} = userData;
+        
+          res.json({username, count})
+          
+        }
+      })
+    } 
+  })
+})
+
 
 app.get("/api/users/:id/logs", (req, res) => {
   const { from, to, limit } = req.query;
