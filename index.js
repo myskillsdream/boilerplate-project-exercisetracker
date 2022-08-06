@@ -108,28 +108,16 @@ app.post("/api/users/:id/exercises", (req, res) => {
   })
 })
 
-app.get("/api/users/:_id/logs", (req, res) => {
-  const { from, to, limit } = req.query;
-  const {id} = req.params._id;
+p.get("/api/users/:_id/logs", (req, res) => {
+  
+  const { id } = req.params;
+
   User.findById(id, (err, userData) => {
     if(err || !userData) {
       res.send("Could not find user");
     }else{
-      let dateObj = {}
-      if(from){
-        dateObj["$gte"] = new Date(from)
-      }
-      if(to){
-        dateObj["$lte"] = new Date(to)
-      }
-      let filter = {
-        userId: id
-      }
-      if(from || to ){
-        filter.date = dateObj
-      }
-      // let nonNullLimit = limit ? limit : 500;
-      let limitPage = (limit !== '' ? parseInt(limit) : 500);
+      
+      let limitPage = (limit !== '' ? parseInt(limit) : 0);
 
       Exercise.find(filter).limit(limitPage).exec((err, data) => {
         if(err || !data){
@@ -138,7 +126,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
 
           let count = data.length
 
-          const {username, _id} = userData;
+          const { username } = userData;
         
           res.json({username, count})
           
