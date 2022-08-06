@@ -61,7 +61,7 @@ app.post("/api/users", (req, res) => {
       newUser.save();
       res.json({
         username: req.body.username,
-        _id: newUser._id
+        _id: newUser.id
       });
     }
   });
@@ -153,14 +153,14 @@ app.post("/api/users/:id/exercises", (req, res) => {
 // })
 
 
-app.get('/api/users/:_id/logs', async function(req, res) {
-const { _id } = req.params;
+app.get('/api/users/:id/logs', async function(req, res) {
+const { id } = req.params;
 let { from, to, limit } = req.query;
 
-console.log('/api/users/:_id/logs', _id, from, to, limit)
+console.log('/api/users/:id/logs', id, from, to, limit)
 
 try {
-let findConditions = { uid: _id };
+let findConditions = { uid: id };
 
 if ((from !== undefined && from !== '') || (to !== undefined && to !== '')) {
   findConditions.date = {};
@@ -184,7 +184,7 @@ const data = await Exercise
 const response = {
   username: data[0].username,
   count: data.length,
-  _id: data[0].uid,
+  id: data[0].uid,
   log: data.map((item) => ({
     description: item.description,
     duration: item.duration,
@@ -192,7 +192,7 @@ const response = {
   }))
 }
 
-console.log('/api/users/:_id/logs', response)
+console.log('/api/users/:id/logs', response)
 
 return res.status(200).json(response)
 } catch (err) {
