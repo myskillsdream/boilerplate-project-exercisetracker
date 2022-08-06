@@ -140,7 +140,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
 
           const {username, _id} = userData;
         
-          res.json({username, count})
+          res.json({username, _id, count})
           
         }
       })
