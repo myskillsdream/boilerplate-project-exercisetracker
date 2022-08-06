@@ -108,34 +108,6 @@ app.post("/api/users/:id/exercises", (req, res) => {
   })
 })
 
-app.get("/api/users/:_id/logs", (req, res) => {
-  
-  const { id } = req.params;
-
-  User.findById(id, (err, userData) => {
-    if(err || !userData) {
-      res.send("Could not find user");
-    }else{
-      
-      let limitPage = (limit !== '' ? parseInt(limit) : 0);
-
-      Exercise.find(filter).limit(limitPage).exec((err, data) => {
-        if(err || !data){
-          res.json([])
-        }else{
-
-          let count = data.length
-
-          const { username } = userData;
-        
-          res.json({username, count})
-          
-        }
-      })
-    } 
-  })
-})
-
 
 app.get("/api/users/:id/logs", (req, res) => {
   const { from, to, limit } = req.query;
