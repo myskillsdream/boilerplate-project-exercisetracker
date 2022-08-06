@@ -108,7 +108,7 @@ app.post("/api/users/:id/exercises", (req, res) => {
   })
 })
 
-p.get("/api/users/:_id/logs", (req, res) => {
+app.get("/api/users/:_id/logs", (req, res) => {
   
   const { id } = req.params;
 
