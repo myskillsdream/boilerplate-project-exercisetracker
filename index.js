@@ -109,7 +109,7 @@ app.post("/api/users/:id/exercises", (req, res) => {
 })
 
 
-app.get("/api/users/:id/logs", (req, res) => {
+app.get("/api/users/:id/log", (req, res) => {
   const { from, to, limit } = req.query;
   const {id} = req.params;
   User.findById(id, (err, userData) => {
