@@ -144,7 +144,7 @@ app.get("/api/users/:id/logs", (req, res) => {
           const log = rawLog.map((l) => ({
             description: l.description,
             duration: l.duration,
-            date: l.date.toDateString()
+            date: l.date
           }))
           res.json({username, count, _id, log})
 
