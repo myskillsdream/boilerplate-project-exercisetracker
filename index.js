@@ -79,7 +79,7 @@ app.get("/api/users", (req, res) => {
 
 app.post("/api/users/:id/exercises", (req, res) => {
   const id = req.params.id
-  const {description, duration, date} = req.body
+  const {description, duration, dateString} = req.body
   User.findById(id, (err, userData) => {
     if(err || !userData) {
       res.send("Could not find user");
@@ -88,18 +88,18 @@ app.post("/api/users/:id/exercises", (req, res) => {
         userId: id, 
         description,
         duration,
-        date: new Date(date).toDateString(), 
+        date: new Date(dateString), 
       })
       newExercise.save((err, data) => {
         if(err || !data) {
           res.send("There was an error saving this exercise")
         }else {
-          const { description, duration, date } = data;
+          const { description, duration, dateString } = data;
           res.json({
             username: userData.username,
             description,
             duration,
-            date: date.toDateString(),
+            date: dateString.toDateString(),
             _id: userData.id
           })
         }
@@ -144,7 +144,7 @@ app.get("/api/users/:id/logs", (req, res) => {
           const log = rawLog.map((l) => ({
             description: l.description,
             duration: l.duration,
-            date: l.date().toDateString()
+            date: l.date
           }))
           res.json({username, count, _id, log})
 
