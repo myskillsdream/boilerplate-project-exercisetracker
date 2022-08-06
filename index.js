@@ -43,8 +43,6 @@ const userSchema = new Schema({
 });
 const User = mongoose.model('User',userSchema);
 
-
-//URI handling
 app.post('/api/users',function(req,res){
   if(req.body.username != undefined){
     let username = req.body.username;
@@ -80,7 +78,6 @@ app.post('/api/users/:_id/exercises',function(req,res){
     else
       date = new Date(date).toDateString();
       
-    // console.log({description,duration,date});
     User.findByIdAndUpdate(_id,{$push:{exercise:{description,duration,date}}},{new:true},function(err,data){
       if(err)res.json({error:"Mongo Error"});
       else{
