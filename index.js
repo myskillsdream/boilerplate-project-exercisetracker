@@ -110,7 +110,7 @@ app.post("/api/users/:id/exercises", (req, res) => {
 
 app.get("/api/users/:_id/logs", (req, res) => {
   const { from, to, limit } = req.query;
-  const {id} = req.params;
+  const {id} = req.params._id;
   User.findById(id, (err, userData) => {
     if(err || !userData) {
       res.send("Could not find user");
@@ -140,7 +140,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
 
           const {username, _id} = userData;
         
-          res.json({username, _id, count})
+          res.json({username, count})
           
         }
       })
